@@ -314,34 +314,34 @@ public class Auth_Plugin extends PluginBase implements Listener {
     }
 
     @EventHandler
-    public void command_event(PlayerCommandPreprocessEvent event) {
+    public void auth_command_event(PlayerCommandPreprocessEvent event) {
         if (!Account_Class.isRegistered(event.getPlayer().getUniqueId()) || !Account_Class.isLogined(event.getPlayer().getUniqueId(), event.getPlayer().getAddress())) event.setCancelled();
     }
 
     @EventHandler
-    public void attack_event(EntityDamageByEntityEvent event) {
+    public void auth_attack_event(EntityDamageByEntityEvent event) {
         if (!(event.getDamager() instanceof Player)) return;
         if (!Account_Class.isRegistered(((Player) event.getDamager()).getUniqueId()) || !Account_Class.isLogined(((Player) event.getDamager()).getUniqueId(), ((Player) event.getDamager()).getAddress())) event.setCancelled();
     }
     @EventHandler
-    public void damage_event(EntityDamageEvent event) {
+    public void auth_damage_event(EntityDamageEvent event) {
         if (!(event.getEntity() instanceof Player)) return;
         if (!Account_Class.isRegistered(((Player) event.getEntity()).getUniqueId()) || !Account_Class.isLogined(((Player) event.getEntity()).getUniqueId(), ((Player) event.getEntity()).getAddress())) event.setCancelled();
     }
     @EventHandler
-    public void interact_event(PlayerInteractEvent event) {
+    public void auth_interact_event(PlayerInteractEvent event) {
         if (!Account_Class.isRegistered(event.getPlayer().getUniqueId()) || !Account_Class.isLogined(event.getPlayer().getUniqueId(), event.getPlayer().getAddress())) event.setCancelled();
     }
     @EventHandler
-    public void interact_by_entity_event(PlayerInteractEntityEvent event) {
+    public void auth_interact_by_entity_event(PlayerInteractEntityEvent event) {
         if (!Account_Class.isRegistered(event.getPlayer().getUniqueId()) || !Account_Class.isLogined(event.getPlayer().getUniqueId(), event.getPlayer().getAddress())) event.setCancelled();
     }
     @EventHandler
-    public void interact_event(InventoryTransactionEvent event) {
+    public void auth_transaction_event(InventoryTransactionEvent event) {
         if (!Account_Class.isRegistered(event.getTransaction().getSource().getUniqueId()) || !Account_Class.isLogined(event.getTransaction().getSource().getUniqueId(), event.getTransaction().getSource().getAddress())) event.setCancelled();
     }
     @EventHandler
-    public void drop_item_event(PlayerDropItemEvent event) {
+    public void auth_drop_item_event(PlayerDropItemEvent event) {
         if (!Account_Class.isRegistered(event.getPlayer().getUniqueId()) || !Account_Class.isLogined(event.getPlayer().getUniqueId(), event.getPlayer().getAddress())) event.setCancelled();
     }
 
