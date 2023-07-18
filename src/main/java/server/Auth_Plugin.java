@@ -22,8 +22,10 @@ import cn.nukkit.potion.Effect;
 import cn.nukkit.scheduler.Task;
 import cn.nukkit.utils.Config;
 import com.google.gson.Gson;
+import lombok.SneakyThrows;
 import org.apache.commons.io.FilenameUtils;
 import server.API.Account_Class;
+import server.API.ConfigInitialization;
 import server.API.EncryptSettings;
 import server.Commands.ClearPassword_Command;
 import java.io.File;
@@ -32,7 +34,6 @@ import java.util.HashMap;
 import java.util.UUID;
 
 public class Auth_Plugin extends PluginBase implements Listener {
-    public static final Gson JSON = new Gson();
     public static EncryptSettings encryptSettings;
     private static Auth_Plugin instance;
     public static Connection connection;
@@ -48,86 +49,9 @@ public class Auth_Plugin extends PluginBase implements Listener {
         instance = this;
     }
 
-
-    public void addDefault(String path, Object object) {
-        this.config.reload();
-        if (!this.config.exists(path)) {
-            this.config.set(path, object);
-            this.config.save();
-        }
-    }
-
+    @SneakyThrows
     public void onEnable() {
-        saveConfig();
-        config = new Config(new File(this.getDataFolder() + "/config.yml"), Config.YAML);
-        addDefault("database.host", "127.0.0.1");
-        addDefault("database.port", "3306");
-        addDefault("database.database", "base_name");
-        addDefault("database.username", "root");
-        addDefault("database.password", "root");
-
-        addDefault("load-and-save-from-mysql", false);
-
-        addDefault("encrypt-settings.key", "IFJDHJOFDJOSFHJOSDHOJFOJD384362689422828483472379479237947923ENCRYPTPASSWORD3493927943790279043792794------EDIT-THIS");
-        addDefault("encrypt-settings.salt", "minecraft_server_hash_password_encrypt------EDIT-THIS");
-        addDefault("encrypt-settings.iteration-count", 92734);
-        addDefault("encrypt-settings.key-length", 256);
-        addDefault("encrypt-settings.vector", JSON.toJson(new byte[]{0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 45, 0, 0, 0}));
-
-        addDefault("joinLocation.x", 0);
-        addDefault("joinLocation.y", 2000);
-        addDefault("joinLocation.z", 0);
-        addDefault("joinLocation.level_name", "%defaultLevel%");
-
-        addDefault("spawnLocation.x", "%defaultLevel_spawnLocationX%");
-        addDefault("spawnLocation.y", "%defaultLevel_spawnLocationY%");
-        addDefault("spawnLocation.z", "%defaultLevel_spawnLocationZ%");
-        addDefault("spawnLocation.level_name", "%defaultLevel%");
-
-
-        addDefault("command.name", "clear_password");
-        addDefault("command.description", "§r§l§aсбросить пароль");
-        addDefault("command.message.args_error", "§sОшибка §7-> §cИспользование: §7/§e%command% <пароль> <повтор пароля>");
-        addDefault("command.message.password_not_equals", "§sОшибка §7-> §cВведенные пароли должны совпадать!");
-        addDefault("command.minimum_length_to_accept_password", 6);
-        addDefault("command.minimum_points_to_accept_password", 30);
-        addDefault("command.message.password_very_easy", "§sОшибка §7-> §cВведенные пароль слишком простой!");
-        addDefault("command.message.password_equals_as_old_password", "§sОшибка §7-> §cВведенные пароль должен отличаться от регистрационного!");
-        addDefault("command.form.title", "§8Смена пароля");
-        addDefault("command.form.content", "§qВы действительно хотите сменить пароль? §cОбязательно запишите новый пароль куда-нибудь, это необходимо чтобы не потерять доступ к своему аккаунту!");
-        addDefault("command.form.text_button_yes", "§cДа");
-        addDefault("command.form.text_button_no", "§aНет");
-        addDefault("command.form.close", "§sОшибка §7-> §cСмена пароля отменена");
-        addDefault("command.form.button_yes", "§eИнформация §7-> §aВы успешно изменили пароль §7(§bНовый пароль:  %password%§7)§a!");
-        addDefault("command.form.button_no", "§sОшибка §7-> §cСмена пароля отменена");
-
-        addDefault("joinEvent.successfully_login", "§eИнформация §7-> §aВы успешно авторизовались!");
-
-        addDefault("createAccount.form.title", "§8Создание аккаунта");
-        addDefault("createAccount.form.buttons.password_1.text", "§fПридумайте и введите пароль:");
-        addDefault("createAccount.form.buttons.password_1.placeholder", "password");
-        addDefault("createAccount.form.buttons.password_2.text", "§fПовторите придуманный Вами пароль:");
-        addDefault("createAccount.form.buttons.password_2.placeholder", "password");
-        addDefault("createAccount.form.buttons.email.text", "§fВведите почту (Необязательно):");
-        addDefault("createAccount.form.buttons.email.placeholder", "steve@gmail.com");
-        addDefault("createAccount.form.message.formClose", "§sОшибка §7-> §cЧтобы продолжить необходимо зарегистрироваться на сервере!");
-        addDefault("createAccount.form.addText.formClose", "§cДля продолжения необходимо зарегистрироваться на сервере!%n%%n%");
-        addDefault("createAccount.form.addText.passwordNotEquals", "§cВведенные пароли должны совпадать!%n%%n%");
-        addDefault("createAccount.form.addText.passwordIsEmpty", "§cПароль не может быть пустым!%n%%n%");
-        addDefault("createAccount.form.minimum_length_to_accept_password", 6);
-        addDefault("createAccount.form.minimum_points_to_accept_password", 30);
-        addDefault("createAccount.form.addText.password_very_easy", "§cВведенный пароль слишком простой!%n%%n%");
-        addDefault("createAccount.form.addText.emailNotValidate", "§cПочта введена неправильно%n%%n%");
-        addDefault("createAccount.form.addText.errorRegistration", "§cПроизошла ошибка при регистрации игрока §b%name%§c!%n%%n%");
-        addDefault("createAccount.form.message.successfully_registration", "§eИнформация §7-> §aВы успешно зарегистрированы на сервере!%n%%n%Ваши данные:%n%Пароль: %password%%n%Почта: %email%%n%Ip: %maskedIp%");
-
-        addDefault("loginAccount.form.title", "§8Вход в аккаунт");
-        addDefault("loginAccount.form.buttons.password.text", "§fВведите пароль:");
-        addDefault("loginAccount.form.buttons.password.placeholder", "password");
-        addDefault("loginAccount.form.message.formClose", "§sОшибка §7-> §cЧтобы продолжить необходимо авторизоваться на сервере!");
-        addDefault("loginAccount.form.addText.formClose", "§cДля продолжения необходимо авторизоваться на сервере!%n%%n%");
-        addDefault("loginAccount.form.addText.password_not_equals", "§cВведенный Вами пароль не совпадает с регистрационным паролем!%n%%n%");
-        addDefault("loginAccount.form.message.successfully_login", "§eИнформация §7-> §aВы успешно авторизовались!");
+        ConfigInitialization.init();
 
         mysql = config.getBoolean("load-and-save-from-mysql");
 
@@ -140,11 +64,7 @@ public class Auth_Plugin extends PluginBase implements Listener {
         );
 
         if (mysql) {
-            try {
-                Class.forName("com.mysql.cj.jdbc.Driver");
-            } catch (ClassNotFoundException e) {
-                throw new RuntimeException(e);
-            }
+            Class.forName("com.mysql.cj.jdbc.Driver");
             try {
                 Connection connection = DriverManager.getConnection("jdbc:mysql://" + getMessage(config.getString("database.host")) + ":" + getMessage(config.getString("database.port")) + "/" + getMessage(config.getString("database.database")) + "?autoReconnect=true&useGmtMillisForDatetimes=true&rewriteBatchedStatements=true&serverTimezone=GMT&useSSL=false", getMessage(config.getString("database.username")), getMessage(config.getString("database.password")));
                 if (connection == null || connection.isClosed()) {
@@ -308,7 +228,7 @@ public class Auth_Plugin extends PluginBase implements Listener {
             sendFormToLogin(event.getPlayer(), null);
         }
     }
-    
+
     public String getMessage(String message) {
         return message.replace("%n%", "\n").replace("%t%", "\t");
     }
@@ -323,23 +243,28 @@ public class Auth_Plugin extends PluginBase implements Listener {
         if (!(event.getDamager() instanceof Player)) return;
         if (!Account_Class.isRegistered(((Player) event.getDamager()).getUniqueId()) || !Account_Class.isLogined(((Player) event.getDamager()).getUniqueId(), ((Player) event.getDamager()).getAddress())) event.setCancelled();
     }
+
     @EventHandler
     public void auth_damage_event(EntityDamageEvent event) {
         if (!(event.getEntity() instanceof Player)) return;
         if (!Account_Class.isRegistered(((Player) event.getEntity()).getUniqueId()) || !Account_Class.isLogined(((Player) event.getEntity()).getUniqueId(), ((Player) event.getEntity()).getAddress())) event.setCancelled();
     }
+
     @EventHandler
     public void auth_interact_event(PlayerInteractEvent event) {
         if (!Account_Class.isRegistered(event.getPlayer().getUniqueId()) || !Account_Class.isLogined(event.getPlayer().getUniqueId(), event.getPlayer().getAddress())) event.setCancelled();
     }
+
     @EventHandler
     public void auth_interact_by_entity_event(PlayerInteractEntityEvent event) {
         if (!Account_Class.isRegistered(event.getPlayer().getUniqueId()) || !Account_Class.isLogined(event.getPlayer().getUniqueId(), event.getPlayer().getAddress())) event.setCancelled();
     }
+
     @EventHandler
     public void auth_transaction_event(InventoryTransactionEvent event) {
         if (!Account_Class.isRegistered(event.getTransaction().getSource().getUniqueId()) || !Account_Class.isLogined(event.getTransaction().getSource().getUniqueId(), event.getTransaction().getSource().getAddress())) event.setCancelled();
     }
+
     @EventHandler
     public void auth_drop_item_event(PlayerDropItemEvent event) {
         if (!Account_Class.isRegistered(event.getPlayer().getUniqueId()) || !Account_Class.isLogined(event.getPlayer().getUniqueId(), event.getPlayer().getAddress())) event.setCancelled();
@@ -404,11 +329,11 @@ public class Auth_Plugin extends PluginBase implements Listener {
             player.teleport(spawnLocation);
             player.sendMessage(
                     getMessage(config.getString("createAccount.form.message.successfully_registration"))
-                    .replace("%name%", player.getName())
-                    .replace("%password%", password)
-                    .replace("%email%", str_email)
-                    .replace("%maskedIp%", maskedIp(player.getAddress()))
-                    .replace("%ip%", player.getAddress())
+                            .replace("%name%", player.getName())
+                            .replace("%password%", password)
+                            .replace("%email%", str_email)
+                            .replace("%maskedIp%", maskedIp(player.getAddress()))
+                            .replace("%ip%", player.getAddress())
             );
             player.removeEffect(Effect.INVISIBILITY);
             player.setImmobile(false);
@@ -455,45 +380,27 @@ public class Auth_Plugin extends PluginBase implements Listener {
         return stringBuilder.toString();
     }
 
+    @SneakyThrows
     public void loadAccounts(boolean mysql) {
         if (mysql) {
-            PreparedStatement preparedStatemen0 = null;
-            try {
-                preparedStatemen0 = connection.prepareStatement("CREATE TABLE if not exists`" + getMessage(config.getString("database.database")) + "`.`auth` (`id` INT NOT NULL AUTO_INCREMENT,`uuid` VARCHAR(37) NOT NULL,`password` TEXT NOT NULL,`email` TEXT NOT NULL,PRIMARY KEY (`id`),UNIQUE INDEX `uuid_UNIQUE` (`uuid` ASC) VISIBLE);");
-                preparedStatemen0.executeUpdate();
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            } finally {
+            PreparedStatement preparedStatementCreateTable = connection.prepareStatement("CREATE TABLE if not exists`" + getMessage(config.getString("database.database")) + "`.`auth` (`id` INT NOT NULL AUTO_INCREMENT,`uuid` VARCHAR(37) NOT NULL,`password` TEXT NOT NULL,`email` TEXT NOT NULL,PRIMARY KEY (`id`),UNIQUE INDEX `uuid_UNIQUE` (`uuid` ASC) VISIBLE);");
+            preparedStatementCreateTable.executeUpdate();
+            preparedStatementCreateTable.close();
+
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM " + getMessage(config.getString("database.database")) + ".auth");
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                UUID uuid = UUID.fromString(resultSet.getString("uuid"));
                 try {
-                    if (preparedStatemen0 != null) preparedStatemen0.close();
-                } catch (SQLException e) {
-                    throw new RuntimeException(e);
+                    Auth_Plugin.createdAccounts.put(uuid, new Account_Class(Auth_Plugin.optimizeGetOfflinePlayer(uuid).getName(), uuid, resultSet.getString("password"), resultSet.getString("email")));
+                } catch (Exception e) {
+                    Server.getInstance().getLogger().warning("Данные об игроке §b" + uuid + "§c не были загружены!");
                 }
             }
-            PreparedStatement preparedStatement = null;
-            ResultSet resultSet = null;
-            try {
-                preparedStatement = connection.prepareStatement("SELECT * FROM " + getMessage(config.getString("database.database")) + ".auth");
-                resultSet = preparedStatement.executeQuery();
-                while (resultSet.next()) {
-                    UUID uuid = UUID.fromString(resultSet.getString("uuid"));
-                    try {
-                        Auth_Plugin.createdAccounts.put(uuid, new Account_Class(Auth_Plugin.optimizeGetOfflinePlayer(uuid).getName(), uuid, resultSet.getString("password"), resultSet.getString("email")));
-                    } catch (Exception e) {
-                        Server.getInstance().getLogger().warning("Данные об игроке §b" + uuid + "§c не были загружены!");
-                    }
-                }
-                preparedStatement.executeBatch();
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            } finally {
-                try {
-                    if (resultSet != null) resultSet.close();
-                    if (preparedStatement != null) preparedStatement.close();
-                } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                }
-            }
+            preparedStatement.executeBatch();
+            resultSet.close();
+            preparedStatement.close();
+
             this.getLogger().info("Информация загружена из mysql");
         } else {
             File[] files = new File(this.getDataFolder() + "/store/").listFiles();
@@ -511,35 +418,28 @@ public class Auth_Plugin extends PluginBase implements Listener {
             this.getLogger().info("Информация загружена из конфигов");
         }
     }
+
+    @SneakyThrows
     public void saveAccounts(boolean mysql) {
         if (mysql) {
             if (connection == null) {
                 Server.getInstance().getLogger().warning("Сохранение данных было отменено!");
                 return;
             }
-            PreparedStatement preparedStatement0 = null;
-            PreparedStatement preparedStatement = null;
-            try {
-                preparedStatement0 = connection.prepareStatement("DELETE FROM " + getMessage(config.getString("database.database")) + ".auth");
-                preparedStatement0.executeUpdate();
-                preparedStatement = connection.prepareStatement("INSERT INTO " + getMessage(config.getString("database.database")) + ".auth(uuid,password,email) VALUES(?,?,?)");
-                for (Account_Class accountClass : createdAccounts.values()) {
-                    preparedStatement.setString(1, String.valueOf(accountClass.getUuid()));
-                    preparedStatement.setString(2, accountClass.getEncryptedPassword());
-                    preparedStatement.setString(3, accountClass.getEmail());
-                    preparedStatement.addBatch();
-                }
-                preparedStatement.executeBatch();
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            } finally {
-                try {
-                    if (preparedStatement0 != null) preparedStatement0.close();
-                    if (preparedStatement != null) preparedStatement.close();
-                } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                }
+
+            PreparedStatement preparedStatementDeleteAll = connection.prepareStatement("DELETE FROM " + getMessage(config.getString("database.database")) + ".auth");
+            preparedStatementDeleteAll.executeUpdate();
+            PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO " + getMessage(config.getString("database.database")) + ".auth(uuid,password,email) VALUES(?,?,?)");
+            for (Account_Class accountClass : createdAccounts.values()) {
+                preparedStatement.setString(1, String.valueOf(accountClass.getUuid()));
+                preparedStatement.setString(2, accountClass.getEncryptedPassword());
+                preparedStatement.setString(3, accountClass.getEmail());
+                preparedStatement.addBatch();
             }
+            preparedStatement.executeBatch();
+            preparedStatementDeleteAll.close();
+            preparedStatement.close();
+
             this.getLogger().info("Информация сохранена в mysql");
         } else {
             for (Account_Class accountClass : createdAccounts.values()) {
