@@ -554,9 +554,6 @@ public class Auth_Plugin extends PluginBase implements Listener {
         }
     }
 
-
-
-
     public static Auth_Plugin getInstance() {
         return instance;
     }
