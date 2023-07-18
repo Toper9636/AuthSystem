@@ -1,0 +1,5 @@
+main: server.Auth_Plugin
+name: AuthSystem
+version: 1.0.0
+api: ["1.0.14"]
+author: Toper9636
