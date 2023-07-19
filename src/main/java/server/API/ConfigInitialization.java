@@ -17,7 +17,6 @@ public class ConfigInitialization {
         }
     }
 
-
     public static void init() {
         AuthPlugin.getInstance().saveConfig();
         AuthPlugin.getInstance().config = new Config(new File(AuthPlugin.getInstance().getDataFolder() + "/config.yml"), Config.YAML);

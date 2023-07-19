@@ -19,6 +19,11 @@
     </repository>
 
     <repository>
+      <id>nukkit-repo</id>
+      <url>https://repo.nukkitx.com/snapshot</url>
+    </repository>
+
+    <repository>
       <id>opencollab-repo-snapshot</id>
       <url>https://repo.opencollab.dev/maven-snapshots</url>
     </repository>
@@ -28,6 +33,12 @@
     <dependency>
       <groupId>cn.nukkit</groupId>
       <artifactId>nukkit</artifactId>
+      <version>1.0-SNAPSHOT</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>ru.nukkit.dblib</groupId>
+      <artifactId>DbLib</artifactId>
       <version>1.0-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
