@@ -20,6 +20,7 @@ import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.scheduler.Task;
 import cn.nukkit.utils.Config;
+import com.google.common.io.Files;
 import lombok.SneakyThrows;
 import org.apache.commons.io.FilenameUtils;
 import server.API.AccountClass;
@@ -354,17 +355,18 @@ public class AuthPlugin extends PluginBase implements Listener {
             this.getLogger().info("Информация загружена из mysql");
         } else {
             File[] files = new File(this.getDataFolder() + "/store/").listFiles();
-            if (files == null) return;
-            for (File file : files) {
-                if (!FilenameUtils.getExtension(file.getName()).equals("yml")) continue;
-                try {
-                    Config cfg = new Config(file, Config.YAML);
-                    UUID uuid = UUID.fromString(cfg.getString("uuid"));
-                    if (!AuthPlugin.createdAccounts.containsKey(uuid)) {
-                        AuthPlugin.createdAccounts.put(uuid, new AccountClass(AuthPlugin.optimizeGetOfflinePlayer(uuid).getName(), uuid, cfg.getString("password"), cfg.getString("email")));
+            if (files != null) {
+                for (File file : files) {
+                    if (!Files.getFileExtension(file.getName()).equals("yml")) continue;
+                    try {
+                        Config cfg = new Config(file, Config.YAML);
+                        UUID uuid = UUID.fromString(cfg.getString("uuid"));
+                        if (!AuthPlugin.createdAccounts.containsKey(uuid)) {
+                            AuthPlugin.createdAccounts.put(uuid, new AccountClass(AuthPlugin.optimizeGetOfflinePlayer(uuid).getName(), uuid, cfg.getString("password"), cfg.getString("email")));
+                        }
+                    } catch (Exception e) {
+                        Server.getInstance().getLogger().warning("Данные с конфига §b" + file.getName() + "§c не были загружены!");
                     }
-                } catch (Exception e) {
-                    Server.getInstance().getLogger().warning("Данные с конфига §b" + file.getName() + "§c не были загружены!");
                 }
             }
             this.getLogger().info("Информация загружена из конфигов");
