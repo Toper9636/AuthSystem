@@ -22,7 +22,6 @@ import cn.nukkit.scheduler.Task;
 import cn.nukkit.utils.Config;
 import com.google.common.io.Files;
 import lombok.SneakyThrows;
-import org.apache.commons.io.FilenameUtils;
 import server.API.AccountClass;
 import server.API.ConfigInitialization;
 import server.API.EncryptSettings;
