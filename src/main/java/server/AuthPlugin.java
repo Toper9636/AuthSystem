@@ -129,7 +129,7 @@ public class AuthPlugin extends PluginBase implements Listener {
 
     private void registerCommand() {
         SimpleCommandMap simpleCommandMap = this.getServer().getCommandMap();
-        simpleCommandMap.register("clearPassword", new ClearPasswordCommand());
+        simpleCommandMap.register("clear_password", new ClearPasswordCommand());
     }
 
     @EventHandler

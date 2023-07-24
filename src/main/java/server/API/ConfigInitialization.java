@@ -45,7 +45,7 @@ public class ConfigInitialization {
         addDefault("spawnLocation.levelName", "%defaultLevel%");
 
 
-        addDefault("command.name", "clearPassword");
+        addDefault("command.name", "clear_password");
         addDefault("command.description", "§r§l§aсбросить пароль");
         addDefault("command.message.argsError", "§sОшибка §7-> §cИспользование: §7/§e%command% <пароль> <повтор пароля>");
         addDefault("command.message.passwordNotEquals", "§sОшибка §7-> §cВведенные пароли должны совпадать!");
