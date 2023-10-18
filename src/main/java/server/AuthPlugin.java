@@ -173,58 +173,71 @@ public class AuthPlugin extends PluginBase implements Listener {
 
     @EventHandler
     public void authCommandEvent(PlayerCommandPreprocessEvent event) {
-        if (!AccountClass.isRegistered(event.getPlayer().getUniqueId()) || !AccountClass.isLogined(event.getPlayer().getUniqueId(), event.getPlayer().getAddress())) {
+        if (!AccountClass.isRegistered(event.getPlayer().getUniqueId()) ||
+                !AccountClass.isLogined(event.getPlayer().getUniqueId(), event.getPlayer().getAddress())) {
             event.setCancelled();
         }
     }
 
     @EventHandler
     public void authAttackEvent(EntityDamageByEntityEvent event) {
-        if (!(event.getDamager() instanceof Player)) return;
-        if (!AccountClass.isRegistered(((Player) event.getDamager()).getUniqueId()) || !AccountClass.isLogined(((Player) event.getDamager()).getUniqueId(), ((Player) event.getDamager()).getAddress())) {
+        if (!(event.getDamager() instanceof Player)) {
+            return;
+        }
+        if (!AccountClass.isRegistered(((Player) event.getDamager()).getUniqueId()) ||
+                !AccountClass.isLogined(((Player) event.getDamager()).getUniqueId(), ((Player) event.getDamager()).getAddress())) {
             event.setCancelled();
         }
     }
 
     @EventHandler
     public void authDamageEvent(EntityDamageEvent event) {
-        if (!(event.getEntity() instanceof Player)) return;
-        if (!AccountClass.isRegistered(((Player) event.getEntity()).getUniqueId()) || !AccountClass.isLogined(((Player) event.getEntity()).getUniqueId(), ((Player) event.getEntity()).getAddress())) {
+        if (!(event.getEntity() instanceof Player)) {
+            return;
+        }
+        if (!AccountClass.isRegistered(((Player) event.getEntity()).getUniqueId()) ||
+                !AccountClass.isLogined(((Player) event.getEntity()).getUniqueId(), ((Player) event.getEntity()).getAddress())) {
             event.setCancelled();
         }
     }
 
     @EventHandler
     public void authInteractEvent(PlayerInteractEvent event) {
-        if (!AccountClass.isRegistered(event.getPlayer().getUniqueId()) || !AccountClass.isLogined(event.getPlayer().getUniqueId(), event.getPlayer().getAddress())) {
+        if (!AccountClass.isRegistered(event.getPlayer().getUniqueId()) ||
+                !AccountClass.isLogined(event.getPlayer().getUniqueId(), event.getPlayer().getAddress())) {
             event.setCancelled();
         }
     }
 
     @EventHandler
     public void authInteractByEntityEvent(PlayerInteractEntityEvent event) {
-        if (!AccountClass.isRegistered(event.getPlayer().getUniqueId()) || !AccountClass.isLogined(event.getPlayer().getUniqueId(), event.getPlayer().getAddress())) {
+        if (!AccountClass.isRegistered(event.getPlayer().getUniqueId()) ||
+                !AccountClass.isLogined(event.getPlayer().getUniqueId(), event.getPlayer().getAddress())) {
             event.setCancelled();
         }
     }
 
     @EventHandler
     public void authTransactionEvent(InventoryTransactionEvent event) {
-        if (!AccountClass.isRegistered(event.getTransaction().getSource().getUniqueId()) || !AccountClass.isLogined(event.getTransaction().getSource().getUniqueId(), event.getTransaction().getSource().getAddress())) {
+        if (!AccountClass.isRegistered(event.getTransaction().getSource().getUniqueId()) ||
+                !AccountClass.isLogined(event.getTransaction().getSource().getUniqueId(), event.getTransaction().getSource().getAddress())) {
             event.setCancelled();
         }
     }
 
     @EventHandler
     public void authDropItemEvent(PlayerDropItemEvent event) {
-        if (!AccountClass.isRegistered(event.getPlayer().getUniqueId()) || !AccountClass.isLogined(event.getPlayer().getUniqueId(), event.getPlayer().getAddress())) {
+        if (!AccountClass.isRegistered(event.getPlayer().getUniqueId()) ||
+                !AccountClass.isLogined(event.getPlayer().getUniqueId(), event.getPlayer().getAddress())) {
             event.setCancelled();
         }
     }
 
     public void sendFormToCreateAccount(Player p, String addText) {
         FormWindowCustom form = new FormWindowCustom(getMessage(config.getString("createAccount.form.title")));
-        if (addText != null && !addText.isEmpty()) form.addElement(new ElementLabel(addText));
+        if (addText != null && !addText.isEmpty()) {
+            form.addElement(new ElementLabel(addText));
+        }
         form.addElement(new ElementInput(getMessage(config.getString("createAccount.form.buttons.password-1.text")), getMessage(config.getString("createAccount.form.buttons.password-1.placeholder"))));
         form.addElement(new ElementInput(getMessage(config.getString("createAccount.form.buttons.password-2.text")), getMessage(config.getString("createAccount.form.buttons.password-2.placeholder"))));
         form.addElement(new ElementInput(getMessage(config.getString("createAccount.form.buttons.email.text")), getMessage(config.getString("createAccount.form.buttons.email.placeholder"))));
